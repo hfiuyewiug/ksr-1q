@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KSRTC Bus Finder – Find Your Bus Across Karnataka</title>
+  <meta name="description" content="Find, track, and plan KSRTC bus routes across all districts of Karnataka. Smart search, real-time updates, and arrival alerts." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS v3 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            border: 'hsl(214.3 31.8% 91.4%)',
+            input: 'hsl(214.3 31.8% 91.4%)',
+            ring: 'hsl(222.2 84% 4.9%)',
+            background: 'hsl(0 0% 100%)',
+            foreground: 'hsl(222.2 84% 4.9%)',
+            primary: { DEFAULT: 'hsl(222.2 47.4% 11.2%)', foreground: 'hsl(210 40% 98%)' },
+            secondary: { DEFAULT: 'hsl(210 40% 96.1%)', foreground: 'hsl(222.2 47.4% 11.2%)' },
+            muted: { DEFAULT: 'hsl(210 40% 96.1%)', foreground: 'hsl(215.4 16.3% 46.9%)' },
+            accent: { DEFAULT: 'hsl(210 40% 96.1%)', foreground: 'hsl(222.2 47.4% 11.2%)' },
+            card: { DEFAULT: 'hsl(0 0% 100%)', foreground: 'hsl(222.2 84% 4.9%)' },
+          },
+          borderRadius: { lg: '0.5rem', md: 'calc(0.5rem - 2px)', sm: 'calc(0.5rem - 4px)' },
+          animation: {
+            'accordion-down': 'accordion-down 0.2s ease-out',
+            'accordion-up': 'accordion-up 0.2s ease-out',
+            'fade-in': 'fadeIn 0.6s ease-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+            'pulse-slow': 'pulse 3s ease-in-out infinite',
+          },
+          keyframes: {
+            'accordion-down': { from: { height: '0' }, to: { height: 'var(--radix-accordion-content-height)' } },
+            'accordion-up': { from: { height: 'var(--radix-accordion-content-height)' }, to: { height: '0' } },
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React & Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- KSRTC Bus Schedule Engine (inline) -->
+  <script>
+  (function(g){
+    const AL={'bangalore':'Bengaluru','bengaluru':'Bengaluru','mysore':'Mysuru','mysuru':'Mysuru','belgaum':'Belagavi','belagavi':'Belagavi','chikmagalur':'Chikkamagaluru','chikkamagaluru':'Chikkamagaluru','kalaburagi':'Kalaburagi','gulbarga':'Kalaburagi','madurai':'Madurai','bantwal':'Bantwal','madikeri':'Madikeri','mercara':'Madikeri'};
+    function nc(n){if(!n)return '';const k=n.trim().toLowerCase();return AL[k]||n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');}
+    const R=[
+      {from:'Mangalore',to:'Udupi',demand:'HIGH',firstBus:'05:30\u201305:45 AM',lastBus:'08:00\u201308:15 PM',timings:['05:30\u201305:45 AM','06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:00\u201308:15 AM','08:30\u201308:45 AM','09:00\u201309:15 AM','10:00\u201310:15 AM','11:00\u201311:15 AM','12:00\u201312:15 PM','01:00\u201301:15 PM','02:00\u201302:15 PM','03:00\u201303:15 PM','04:00\u201304:15 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM','08:00\u201308:15 PM']},
+      {from:'Mangalore',to:'Bantwal',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:30\u201307:45 PM',timings:['06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:30\u201308:45 AM','09:30\u201309:45 AM','10:30\u201310:45 AM','11:30\u201311:45 AM','12:30\u201312:45 PM','01:30\u201301:45 PM','02:30\u201302:45 PM','03:30\u201303:45 PM','04:30\u201304:45 PM','05:30\u201305:45 PM','06:30\u201306:45 PM','07:30\u201307:45 PM']},
+      {from:'Mangalore',to:'Puttur',demand:'HIGH',firstBus:'05:45\u201306:00 AM',lastBus:'06:30\u201306:45 PM',timings:['05:45\u201306:00 AM','06:30\u201306:45 AM','07:30\u201307:45 AM','08:30\u201308:45 AM','10:00\u201310:15 AM','11:30\u201311:45 AM','01:00\u201301:15 PM','02:30\u201302:45 PM','04:00\u201304:15 PM','05:30\u201305:45 PM','06:30\u201306:45 PM']},
+      {from:'Mangalore',to:'Moodbidri',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:30\u201307:45 PM',timings:['06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:00\u201308:15 AM','08:30\u201308:45 AM','09:30\u201309:45 AM','10:30\u201310:45 AM','11:30\u201311:45 AM','12:30\u201312:45 PM','01:30\u201301:45 PM','02:30\u201302:45 PM','03:30\u201303:45 PM','04:30\u201304:45 PM','05:30\u201305:45 PM','06:30\u201306:45 PM','07:30\u201307:45 PM']},
+      {from:'Mangalore',to:'Belthangady',demand:'MEDIUM',firstBus:'06:30\u201306:45 AM',lastBus:'05:30\u201305:45 PM',timings:['06:30\u201306:45 AM','08:00\u201308:15 AM','10:30\u201310:45 AM','12:30\u201312:45 PM','02:30\u201302:45 PM','04:30\u201304:45 PM','05:30\u201305:45 PM']},
+      {from:'Mangalore',to:'Sullia',demand:'MEDIUM',firstBus:'06:00\u201306:15 AM',lastBus:'06:00\u201306:15 PM',timings:['06:00\u201306:15 AM','08:30\u201308:45 AM','11:00\u201311:15 AM','02:00\u201302:15 PM','04:30\u201304:45 PM','06:00\u201306:15 PM']},
+      {from:'Mangalore',to:'Bengaluru',demand:'LONG DISTANCE',firstBus:'06:00\u201306:15 AM',lastBus:'04:00\u201304:15 PM',timings:['06:00\u201306:15 AM','07:30\u201307:45 AM','09:00\u201309:15 AM','01:00\u201301:15 PM','04:00\u201304:15 PM']},
+      {from:'Mangalore',to:'Mysuru',demand:'LONG DISTANCE',firstBus:'06:30\u201306:45 AM',lastBus:'03:00\u201303:15 PM',timings:['06:30\u201306:45 AM','09:00\u201309:15 AM','12:30\u201312:45 PM','03:00\u201303:15 PM']},
+      {from:'Mangalore',to:'Belagavi',demand:'LONG DISTANCE',firstBus:'07:00\u201307:15 AM',lastBus:'07:00\u201307:15 PM',timings:['07:00\u201307:15 AM','02:00\u201302:15 PM','07:00\u201307:15 PM']},
+      {from:'Mangalore',to:'Kalaburagi',demand:'LONG DISTANCE',firstBus:'06:00\u201306:15 AM',lastBus:'08:00\u201308:15 PM',timings:['06:00\u201306:15 AM','03:00\u201303:15 PM','08:00\u201308:15 PM']},
+      {from:'Hassan',to:'Bengaluru',demand:'HIGH',firstBus:'05:30\u201305:45 AM',lastBus:'09:00\u201309:15 PM',timings:['05:30\u201305:45 AM','06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:00\u201308:15 AM','08:30\u201308:45 AM','09:00\u201309:15 AM','10:00\u201310:15 AM','11:00\u201311:15 AM','12:00\u201312:15 PM','01:00\u201301:15 PM','02:00\u201302:15 PM','03:00\u201303:15 PM','04:00\u201304:15 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM','08:00\u201308:15 PM','09:00\u201309:15 PM']},
+      {from:'Hassan',to:'Mysuru',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:30\u201307:45 PM',timings:['06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:30\u201308:45 AM','09:30\u201309:45 AM','10:30\u201310:45 AM','11:30\u201311:45 AM','12:30\u201312:45 PM','01:30\u201301:45 PM','02:30\u201302:45 PM','03:30\u201303:45 PM','04:30\u201304:45 PM','05:30\u201305:45 PM','06:30\u201306:45 PM','07:30\u201307:45 PM']},
+      {from:'Hassan',to:'Mangalore',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'06:00\u201306:15 PM',timings:['06:00\u201306:15 AM','07:30\u201307:45 AM','09:00\u201309:15 AM','11:00\u201311:15 AM','01:00\u201301:15 PM','03:00\u201303:15 PM','05:00\u201305:15 PM','06:00\u201306:15 PM']},
+      {from:'Hassan',to:'Chikkamagaluru',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:00\u201308:15 AM','09:30\u201309:45 AM','11:00\u201311:15 AM','12:30\u201312:45 PM','02:00\u201302:15 PM','03:30\u201303:45 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM']},
+      {from:'Hassan',to:'Sakleshpur',demand:'MEDIUM',firstBus:'06:30\u201306:45 AM',lastBus:'06:00\u201306:15 PM',timings:['06:30\u201306:45 AM','08:00\u201308:15 AM','09:30\u201309:45 AM','11:00\u201311:15 AM','12:30\u201312:45 PM','02:00\u201302:15 PM','03:30\u201303:45 PM','05:00\u201305:15 PM','06:00\u201306:15 PM']},
+      {from:'Hassan',to:'Belur',demand:'MEDIUM',firstBus:'06:00\u201306:15 AM',lastBus:'06:30\u201306:45 PM',timings:['06:00\u201306:15 AM','07:30\u201307:45 AM','09:00\u201309:15 AM','10:30\u201310:45 AM','12:00\u201312:15 PM','01:30\u201301:45 PM','03:00\u201303:15 PM','04:30\u201304:45 PM','06:00\u201306:15 PM','06:30\u201306:45 PM']},
+      {from:'Hassan',to:'Halebidu',demand:'MEDIUM',firstBus:'07:00\u201307:15 AM',lastBus:'05:00\u201305:15 PM',timings:['07:00\u201307:15 AM','09:00\u201309:15 AM','11:00\u201311:15 AM','01:00\u201301:15 PM','03:00\u201303:15 PM','05:00\u201305:15 PM']},
+      {from:'Hassan',to:'Arsikere',demand:'MEDIUM',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:00\u201308:15 AM','09:30\u201309:45 AM','11:00\u201311:15 AM','12:30\u201312:45 PM','02:00\u201302:15 PM','03:30\u201303:45 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM']},
+      {from:'Hassan',to:'Channarayapatna',demand:'MEDIUM',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:30\u201308:45 AM','10:00\u201310:15 AM','11:30\u201311:45 AM','01:00\u201301:15 PM','02:30\u201302:45 PM','04:00\u201304:15 PM','05:30\u201305:45 PM','07:00\u201307:15 PM']},
+      {from:'Mysuru',to:'Bengaluru',demand:'HIGH',firstBus:'05:00\u201305:15 AM',lastBus:'10:00\u201310:15 PM',timings:['05:00\u201305:15 AM','05:30\u201305:45 AM','06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:00\u201308:15 AM','08:30\u201308:45 AM','09:00\u201309:15 AM','09:30\u201309:45 AM','10:00\u201310:15 AM','11:00\u201311:15 AM','12:00\u201312:15 PM','01:00\u201301:15 PM','02:00\u201302:15 PM','03:00\u201303:15 PM','04:00\u201304:15 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM','08:00\u201308:15 PM','09:00\u201309:15 PM','10:00\u201310:15 PM']},
+      {from:'Mysuru',to:'Mandya',demand:'HIGH',firstBus:'05:30\u201305:45 AM',lastBus:'08:30\u201308:45 PM',timings:['05:30\u201305:45 AM','06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:00\u201308:15 AM','08:30\u201308:45 AM','09:00\u201309:15 AM','10:00\u201310:15 AM','11:00\u201311:15 AM','12:00\u201312:15 PM','01:00\u201301:15 PM','02:00\u201302:15 PM','03:00\u201303:15 PM','04:00\u201304:15 PM','05:00\u201305:15 PM','06:00\u201306:15 PM','07:00\u201307:15 PM','08:00\u201308:15 PM','08:30\u201308:45 PM']},
+      {from:'Mysuru',to:'Hassan',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:00\u201308:15 AM','09:00\u201309:15 AM','10:30\u201310:45 AM','12:00\u201312:15 PM','01:30\u201301:45 PM','03:00\u201303:15 PM','04:30\u201304:45 PM','06:00\u201306:15 PM','07:00\u201307:15 PM']},
+      {from:'Mysuru',to:'Chamarajanagar',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:30\u201307:45 PM',timings:['06:00\u201306:15 AM','06:30\u201306:45 AM','07:00\u201307:15 AM','07:30\u201307:45 AM','08:30\u201308:45 AM','09:30\u201309:45 AM','10:30\u201310:45 AM','11:30\u201311:45 AM','12:30\u201312:45 PM','01:30\u201301:45 PM','02:30\u201302:45 PM','03:30\u201303:45 PM','04:30\u201304:45 PM','05:30\u201305:45 PM','06:30\u201306:45 PM','07:30\u201307:45 PM']},
+      {from:'Mysuru',to:'Hunsur',demand:'HIGH',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:00\u201308:15 AM','09:00\u201309:15 AM','10:30\u201310:45 AM','12:00\u201312:15 PM','01:30\u201301:45 PM','03:00\u201303:15 PM','04:30\u201304:45 PM','06:00\u201306:15 PM','07:00\u201307:15 PM']},
+      {from:'Mysuru',to:'Kushalnagar',demand:'MEDIUM',firstBus:'06:30\u201306:45 AM',lastBus:'06:00\u201306:15 PM',timings:['06:30\u201306:45 AM','08:00\u201308:15 AM','09:30\u201309:45 AM','11:00\u201311:15 AM','12:30\u201312:45 PM','02:00\u201302:15 PM','03:30\u201303:45 PM','05:00\u201305:15 PM','06:00\u201306:15 PM']},
+      {from:'Mysuru',to:'Piriyapatna',demand:'MEDIUM',firstBus:'07:00\u201307:15 AM',lastBus:'06:00\u201306:15 PM',timings:['07:00\u201307:15 AM','08:30\u201308:45 AM','10:00\u201310:15 AM','11:30\u201311:45 AM','01:00\u201301:15 PM','02:30\u201302:45 PM','04:00\u201304:15 PM','05:30\u201305:45 PM','06:00\u201306:15 PM']},
+      {from:'Mysuru',to:'Nanjangud',demand:'MEDIUM',firstBus:'06:00\u201306:15 AM',lastBus:'07:00\u201307:15 PM',timings:['06:00\u201306:15 AM','07:00\u201307:15 AM','08:00\u201308:15 AM','09:00\u201309:15 AM','10:30\u201310:45 AM','12:00\u201312:15 PM','01:30\u201301:45 PM','03:00\u201303:15 PM','04:30\u201304:45 PM','06:00\u201306:15 PM','07:00\u201307:15 PM']},
+      {from:'Mysuru',to:'Gundlupet',demand:'MEDIUM',firstBus:'06:30\u201306:45 AM',lastBus:'06:00\u201306:15 PM',timings:['06:30\u201306:45 AM','08:00\u201308:15 AM','09:30\u201309:45 AM','11:00\u201311:15 AM','12:30\u201312:45 PM','02:00\u201302:15 PM','03:30\u201303:45 PM','05:00\u201305:15 PM','06:00\u201306:15 PM']},
+      {from:'Mysuru',to:'Mangalore',demand:'LONG DISTANCE',firstBus:'06:00\u201306:15 AM',lastBus:'04:00\u201304:15 PM',timings:['06:00\u201306:15 AM','08:30\u201308:45 AM','11:00\u201311:15 AM','01:30\u201301:45 PM','04:00\u201304:15 PM']},
+      {from:'Mysuru',to:'Belagavi',demand:'LONG DISTANCE',firstBus:'06:30\u201306:45 AM',lastBus:'03:00\u201303:15 PM',timings:['06:30\u201306:45 AM','10:00\u201310:15 AM','01:00\u201301:15 PM','03:00\u201303:15 PM']},
+      {from:'Mysuru',to:'Kalaburagi',demand:'LONG DISTANCE',firstBus:'07:00\u201307:15 AM',lastBus:'04:00\u201304:15 PM',timings:['07:00\u201307:15 AM','11:00\u201311:15 AM','04:00\u201304:15 PM']},
+      {from:'Mysuru',to:'Madurai',demand:'LONG DISTANCE',firstBus:'07:30\u201307:45 AM',lastBus:'08:00\u201308:15 PM',timings:['07:30\u201307:45 AM','12:00\u201312:15 PM','08:00\u201308:15 PM']},
+    ];
+    function rtm(r){const d=r.indexOf('\u2013');const s=r.substring(0,d).trim();const e=r.substring(d+1).trim();const p=/PM/i.test(e)?'PM':'AM';const[h,m]=s.split(':').map(Number);let hr=h;if(p==='PM'&&h!==12)hr+=12;if(p==='AM'&&h===12)hr=0;return hr*60+m;}
+    function hm(t){const[h,m]=String(t).split(':').map(Number);return h*60+m;}
+    function freq(ts){if(!ts||ts.length<2)return 'Low';const ms=ts.map(rtm);let tot=0;for(let i=1;i<ms.length;i++)tot+=ms[i]-ms[i-1];const avg=tot/(ms.length-1);return avg<30?'High':avg<=90?'Medium':'Low';}
+    function findBus(from,to,cur){
+      const f=nc(from),t=nc(to);
+      const route=R.find(r=>r.from.toLowerCase()===f.toLowerCase()&&r.to.toLowerCase()===t.toLowerCase());
+      if(!route)return{from:f,to:t,currentTime:cur,status:'No route found',message:'No direct buses available for this route',nextBus:null,upcomingBuses:[],allTimings:[],frequency:null,demand:null,firstBus:null,lastBus:null,note:'Try another route'};
+      const cm=hm(cur),fb=rtm(route.firstBus),lb=rtm(route.lastBus),fq=freq(route.timings);
+      const up=route.timings.filter(t=>rtm(t)>=cm);
+      const base={from:f,to:t,currentTime:cur,frequency:fq,demand:route.demand,firstBus:route.firstBus,lastBus:route.lastBus,allTimings:route.timings,note:'Timings are approximate and may vary'};
+      if(cm<fb)return{...base,status:'Not started',message:'First bus has not started yet',nextBus:route.firstBus,upcomingBuses:route.timings};
+      if(cm>lb)return{...base,status:'No buses now',message:'No more buses today. Resumes tomorrow.',nextBus:route.firstBus+' (tomorrow)',upcomingBuses:[]};
+      return{...base,status:'Available',message:'Bus available',nextBus:up[0],upcomingBuses:up};
+    }
+    g.KSRTCEngine={findBus,ROUTES:R,normalizeCity:nc};
+  })(window);
+  </script>
+
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    * { font-family: 'Inter', sans-serif; box-sizing: border-box; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 3px; }
+
+    /* Accordion animation */
+    .accordion-content {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+      opacity: 0;
+    }
+    .accordion-content.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    /* Custom select styling */
+    .custom-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* Tab active state */
+    .tab-active {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      color: #111827;
+    }
+
+    /* Card hover effect */
+    .card-hover { transition: all 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+
+    /* Hero pattern */
+    .hero-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M36 18c3.314 0 6 2.686 6 6s-2.686 6-6 6-6-2.686-6-6 2.686-6 6-6' stroke='%23fff' stroke-opacity='.07' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Loading spinner */
+    .spinner {
+      border: 2px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Badge */
+    .badge { display: inline-flex; align-items: center; border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 500; }
+
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+
+    /* Section fade-in on scroll */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-white text-gray-900 antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ──────────────── DATA ────────────────
+    const districts = [
+      // ── Mangalore Hub ──
+      { name: 'Mangalore',        code: 'MNG' },
+      { name: 'Udupi',            code: 'UDI' },
+      { name: 'Bantwal',          code: 'BNT' },
+      { name: 'Puttur',           code: 'PUT' },
+      { name: 'Moodbidri',        code: 'MDB' },
+      { name: 'Belthangady',      code: 'BLT' },
+      { name: 'Sullia',           code: 'SUL' },
+      // ── Hassan Hub ──
+      { name: 'Hassan',           code: 'HSN' },
+      { name: 'Chikkamagaluru',   code: 'CKM' },
+      { name: 'Sakleshpur',       code: 'SKP' },
+      { name: 'Belur',            code: 'BLR2'},
+      { name: 'Halebidu',         code: 'HLD' },
+      { name: 'Arsikere',         code: 'ARK' },
+      { name: 'Channarayapatna',  code: 'CRP' },
+      // ── Mysuru Hub ──
+      { name: 'Mysuru',           code: 'MYS' },
+      { name: 'Mandya',           code: 'MDY' },
+      { name: 'Chamarajanagar',   code: 'CNR' },
+      { name: 'Hunsur',           code: 'HNS' },
+      { name: 'Kushalnagar',      code: 'KSN' },
+      { name: 'Piriyapatna',      code: 'PRY' },
+      { name: 'Nanjangud',        code: 'NJG' },
+      { name: 'Gundlupet',        code: 'GNL' },
+      // ── Long Distance ──
+      { name: 'Bengaluru',        code: 'BLR' },
+      { name: 'Belagavi',         code: 'BEL' },
+      { name: 'Kalaburagi',       code: 'KBG' },
+      { name: 'Madurai',          code: 'MDR' },
+      // ── Existing ──
+      { name: 'Hubli',            code: 'HUB' },
+      { name: 'Davangere',        code: 'DVG' },
+      { name: 'Shimoga',          code: 'SHM' },
+      { name: 'Tumkur',           code: 'TMK' },
+      { name: 'Madikeri',         code: 'MDK' },
+    ];
+
+    const features = [
+      { icon: 'search', title: 'Smart Search', description: 'Find buses instantly with our intelligent search system across all Karnataka routes.' },
+      { icon: 'clock', title: 'Real-Time Updates', description: 'Get live bus tracking and accurate arrival times for better journey planning.' },
+      { icon: 'bell', title: 'Arrival Alerts', description: 'Receive notifications when your bus is approaching your stop.' },
+      { icon: 'route', title: 'Route Planning', description: 'Plan your journey with detailed route information and multiple options.' },
+      { icon: 'smartphone', title: 'Mobile Friendly', description: 'Access from anywhere with our responsive design for all devices.' },
+      { icon: 'shield', title: 'Secure & Reliable', description: 'Trust our platform for accurate and verified bus information.' },
+    ];
+
+    const testimonials = [
+      { name: 'Rajesh Kumar', role: 'Daily Commuter', content: 'This app has made my daily commute so much easier. I can plan my journey and never miss a bus anymore!', rating: 5 },
+      { name: 'Priya Sharma', role: 'Student', content: 'As a student traveling between cities, KSRTC Bus Finder helps me find the best routes and save time.', rating: 5 },
+      { name: 'Arun Patel', role: 'Business Traveler', content: 'The live tracking feature is amazing. I can manage my schedule better knowing exactly when my bus arrives.', rating: 5 },
+    ];
+
+    const popularRoutes = [
+      { from: 'Hassan',      to: 'Mangalore', duration: '3h 15m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '06:30 AM', seats: 18, status: 'On Time',  highlight: false },
+      { from: 'Madikeri',    to: 'Mysuru',    duration: '3h 45m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '07:00 AM', seats: 6,  status: 'On Time',  highlight: true  },
+      { from: 'Bengaluru',   to: 'Mysuru',    duration: '3h 00m', frequency: 'Every 15 mins', type: 'Volvo AC', nextBus: '06:45 AM', seats: 22, status: 'On Time',  highlight: false },
+      { from: 'Chikmagalur', to: 'Hassan',    duration: '2h 30m', frequency: 'Every 45 mins', type: 'Express',  nextBus: '07:15 AM', seats: 31, status: 'On Time',  highlight: false },
+      { from: 'Mangalore',   to: 'Bangalore', duration: '7h 00m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '05:30 AM', seats: 4,  status: 'Running Late', highlight: false },
+      { from: 'Hubli',       to: 'Belgaum',   duration: '2h 00m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '07:30 AM', seats: 26, status: 'On Time',  highlight: false },
+    ];
+
+    const faqs = [
+      { question: 'How accurate are the bus timings?', answer: 'Our timings are based on scheduled KSRTC routes and are updated regularly. However, actual timings may vary slightly due to traffic or weather conditions.' },
+      { question: 'Can I book tickets through this app?', answer: 'Currently, we provide bus discovery and timing information. Ticket booking is not supported directly, please use the official KSRTC website for reservations.' },
+      { question: 'How do I track my bus location?', answer: 'Real-time tracking depends on the specific bus type. While we provide scheduled timings and route information, live GPS tracking is rolling out progressively.' },
+      { question: 'Are all districts in Karnataka covered?', answer: 'Yes, our database includes major hubs and routes across all districts in Karnataka.' },
+    ];
+
+    // ──────────────── UI COMPONENTS ────────────────
+
+    function Button({ children, onClick, className = '', variant = 'default', size = 'default', disabled = false, type = 'button' }) {
+      const base = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 cursor-pointer border-0 outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+      const variants = {
+        default: 'bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-900',
+        destructive: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-600',
+        outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-300',
+        secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-300',
+        ghost: 'text-gray-700 hover:bg-gray-100',
+        link: 'text-gray-900 underline-offset-4 hover:underline',
+      };
+      const sizes = {
+        default: 'h-9 px-4 py-2 text-sm',
+        sm: 'h-8 px-3 text-sm',
+        lg: 'h-11 px-6 text-base',
+        icon: 'h-9 w-9',
+      };
+      return (
+        <button
+          type={type}
+          onClick={onClick}
+          disabled={disabled}
+          className={`${base} ${variants[variant] || variants.default} ${sizes[size] || sizes.default} ${className}`}
+        >
+          {children}
+        </button>
+      );
+    }
+
+    function Badge({ children, className = '', variant = 'default' }) {
+      const variants = {
+        default: 'bg-gray-900 text-white border-transparent',
+        secondary: 'bg-gray-100 text-gray-800 border-transparent',
+        outline: 'text-gray-700 border border-gray-300',
+        destructive: 'bg-red-600 text-white border-transparent',
+      };
+      return (
+        <span className={`badge text-xs font-medium ${variants[variant] || variants.default} ${className}`}>
+          {children}
+        </span>
+      );
+    }
+
+    function Card({ children, className = '' }) {
+      return <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`}>{children}</div>;
+    }
+    function CardHeader({ children, className = '' }) {
+      return <div className={`px-6 pt-6 pb-0 ${className}`}>{children}</div>;
+    }
+    function CardTitle({ children, className = '' }) {
+      return <h3 className={`font-semibold text-gray-900 ${className}`}>{children}</h3>;
+    }
+    function CardDescription({ children, className = '' }) {
+      return <p className={`text-sm text-gray-500 mt-1 ${className}`}>{children}</p>;
+    }
+    function CardContent({ children, className = '' }) {
+      return <div className={`px-6 py-4 ${className}`}>{children}</div>;
+    }
+
+    function Input({ type = 'text', placeholder, value, onChange, className = '' }) {
+      return (
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className={`flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+        />
+      );
+    }
+
+    const AccordionContext = React.createContext({ openItem: null, setOpenItem: () => {} });
+    function Accordion({ children, className = '' }) {
+      const [openItem, setOpenItem] = useState(null);
+      return (
+        <AccordionContext.Provider value={{ openItem, setOpenItem }}>
+          <div className={`space-y-4 ${className}`}>{children}</div>
+        </AccordionContext.Provider>
+      );
+    }
+    function AccordionItem({ value, children, className = '' }) {
+      return <div className={`border border-gray-200 rounded-xl bg-white overflow-hidden ${className}`}>{React.Children.map(children, child => React.isValidElement(child) ? React.cloneElement(child, { value }) : child)}</div>;
+    }
+    function AccordionTrigger({ value, children, className = '' }) {
+      const { openItem, setOpenItem } = React.useContext(AccordionContext);
+      const isOpen = openItem === value;
+      return (
+        <button
+          onClick={() => setOpenItem(isOpen ? null : value)}
+          className={`flex flex-1 items-center justify-between py-4 px-5 font-semibold transition-all w-full text-left bg-white hover:bg-gray-50 focus:outline-none ${className}`}
+        >
+          {children}
+          <Icon name="chevron-down" className={`h-5 w-5 shrink-0 transition-transform duration-200 text-gray-500 ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+      );
+    }
+    function AccordionContent({ value, children, className = '' }) {
+      const { openItem } = React.useContext(AccordionContext);
+      const isOpen = openItem === value;
+      return (
+        <div className={`text-sm transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'} ${className}`} style={{ overflow: 'hidden' }}>
+          <div className="pb-4 pt-0 px-5 text-gray-500">{children}</div>
+        </div>
+      );
+    }
+
+    function Select({ value, onChange, placeholder, options, className = '' }) {
+      return (
+        <select
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          className={`custom-select flex h-9 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent ${!value ? 'text-gray-400' : 'text-gray-900'} ${className}`}
+        >
+          <option value="" disabled hidden>{placeholder}</option>
+          {options.map(opt => (
+            <option key={opt.code} value={opt.name}>{opt.name}</option>
+          ))}
+        </select>
+      );
+    }
+
+    function Icon({ name, className = 'w-5 h-5' }) {
+      const iconMap = {
+        bus: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="14" rx="2"/><path d="M8 18v2m8-2v2M1 12h22M8 4v8M16 4v8"/></svg>,
+        'map-pin': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
+        'map-pinned': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M18 8c0 4.5-6 9-6 9s-6-4.5-6-9a6 6 0 0 1 12 0"/><circle cx="12" cy="8" r="2"/><path d="M8.835 20H5a1 1 0 0 1-.988-0.749l-1-3.5A1 1 0 0 1 4 15h16a1 1 0 0 1 .988 1.249l-1 3.5A1 1 0 0 1 19 21h-3.835"/></svg>,
+        clock: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+        search: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+        bell: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>,
+        route: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5c.4 0 .9-.1 1.3-.4a3 3 0 0 0-1.3-5.6H10"/><path d="M6 16V6"/><circle cx="18" cy="5" r="3"/><path d="M18 8v1"/></svg>,
+        star: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+        'check-circle': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
+        users: () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+        'trending-up': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+        'arrow-right': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
+        'chevron-down': () => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>,
+      };
+      const IconComponent = iconMap[name];
+      return IconComponent ? <IconComponent /> : null;
+    }
+
+    function Tabs({ children, value, onValueChange }) {
+      return (
+        <div data-tabs="true">
+          {React.Children.map(children, child =>
+            React.cloneElement(child, { activeTab: value, onTabChange: onValueChange })
+          )}
+        </div>
+      );
+    }
+    function TabsList({ children, activeTab, onTabChange }) {
+      return (
+        <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-100 p-1 w-full mb-4">
+          {React.Children.map(children, child =>
+            React.cloneElement(child, { activeTab, onTabChange })
+          )}
+        </div>
+      );
+    }
+    function TabsTrigger({ value, children, activeTab, onTabChange }) {
+      const isActive = activeTab === value;
+      return (
+        <button
+          onClick={() => onTabChange(value)}
+          className={`flex-1 inline-flex items-center justify-center rounded-md px-3 py-1 text-sm font-medium transition-all ${
+            isActive ? 'tab-active' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          {children}
+        </button>
+      );
+    }
+    function TabsContent({ value, children, activeTab }) {
+      if (activeTab !== value) return null;
+      return <div>{children}</div>;
+    }
+
+    // ──────────────── MAIN APP ────────────────
+    function KSRTCBusFinder() {
+      const [fromDistrict, setFromDistrict] = useState('');
+      const [toDistrict, setToDistrict] = useState('');
+      const [searchResult, setSearchResult] = useState(null);
+      const [isSearching, setIsSearching] = useState(false);
+      const [activeTab, setActiveTab] = useState('search');
+      const [showAllTimings, setShowAllTimings] = useState(false);
+      const [selectedDate, setSelectedDate] = useState('');
+      const [selectedTime, setSelectedTime] = useState('');
+      const [timingResult, setTimingResult] = useState(null);
+      const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+      const [newsletterEmail, setNewsletterEmail] = useState('');
+      
+      // Interactive Features State
+      const [trackingActive, setTrackingActive] = useState(null);
+      const [progress, setProgress] = useState(0);
+      const [toastMessage, setToastMessage] = useState('');
+      const [uploadedImages, setUploadedImages] = useState({});
+
+      useEffect(() => {
+        let interval;
+        if (trackingActive && progress < 100) {
+          interval = setInterval(() => {
+            setProgress(p => {
+              const next = p + 4; // Simulated speed
+              return Math.min(next, 100);
+            });
+          }, 800);
+        }
+        return () => clearInterval(interval);
+      }, [trackingActive]);
+
+      useEffect(() => {
+         if (progress >= 90 && progress < 95 && trackingActive && !toastMessage) {
+            setToastMessage(`Your bus is arriving at ${trackingActive.to} in 5 mins!`);
+            setTimeout(() => setToastMessage(''), 8000);
+         }
+      }, [progress, trackingActive, toastMessage]);
+
+      const handleImageUpload = (index, e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            setUploadedImages(prev => ({ ...prev, [index]: ev.target.result }));
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      // Convert "HH:MM" or range-start like "06:30" + period to minutes
+      const toMins = (hhmm) => {
+        try {
+          if (!hhmm) return 0;
+          const [h, m] = String(hhmm).split(':').map(Number);
+          return (isNaN(h) || isNaN(m)) ? 0 : h * 60 + m;
+        } catch (err) {
+          console.error("Error in toMins:", err);
+          return 0;
+        }
+      };
+
+      // Convert engine timing range "06:30\u201306:45 AM" to 24h minutes
+      const rangeToMins = (range) => {
+        try {
+          if (!range) return 0;
+          const dash = range.indexOf('\u2013');
+          if (dash === -1) return 0;
+          const start = range.substring(0, dash).trim();
+          const end   = range.substring(dash + 1).trim();
+          const pm    = /PM/i.test(end);
+          const parts = start.split(':');
+          if (parts.length < 2) return 0;
+          const [h, m] = parts.map(Number);
+          let hr = h;
+          if (pm && h !== 12) hr += 12;
+          if (!pm && h === 12) hr = 0;
+          return hr * 60 + m;
+        } catch (err) {
+          console.error("Error in rangeToMins:", err);
+          return 0;
+        }
+      };
+
+      const handleCheckTiming = () => {
+        try {
+          const dateEl = document.getElementById("date");
+          const timeEl = document.getElementById("userTime");
+          const date = dateEl ? dateEl.value : selectedDate;
+          const time = timeEl ? timeEl.value : selectedTime;
+          
+          console.log("Selected Date:", date);
+          console.log("Selected Time:", time);
+
+          if (!date || !time) {
+            alert("Please select both Date and Time!");
+            return;
+          }
+
+          if (!fromDistrict || !toDistrict) {
+            setTimingResult({ type: 'error', message: 'Please select From and To locations.' });
+            return;
+          }
+          const engine = window.KSRTCEngine;
+          if (!engine) return setTimingResult({ type: 'error', message: 'Bus data engine not loaded.' });
+          
+          const result = engine.findBus(fromDistrict, toDistrict, time);
+          if (result.status === 'No route found') {
+            setTimingResult({ type: 'error', message: `No direct route found from ${fromDistrict} to ${toDistrict}.` });
+          } else if (result.status === 'No buses now' || result.upcomingBuses.length === 0) {
+            setTimingResult({ type: 'error', message: 'No more buses today for this route. Try an earlier time.' });
+          } else {
+             setTimingResult({ type: 'exact', match: result.upcomingBuses[0], date: date });
+          }
+        } catch (err) {
+          console.error(err);
+          setTimingResult({ type: 'error', message: 'An unexpected error occurred during timing check.' });
+        }
+      };
+
+      const handleSearch = () => {
+        try {
+          if (!fromDistrict || !toDistrict) return;
+          console.log("Search Inputs:", { from: fromDistrict, to: toDistrict });
+          
+          setIsSearching(true);
+          setShowAllTimings(false);
+          
+          setTimeout(() => {
+            try {
+              let timeToUse;
+              if (selectedTime) {
+                 timeToUse = selectedTime;
+              } else {
+                 const now  = new Date();
+                 const hh   = String(now.getHours()).padStart(2, '0');
+                 const mm   = String(now.getMinutes()).padStart(2, '0');
+                 timeToUse = `${hh}:${mm}`;
+              }
+              
+              if (!window.KSRTCEngine) {
+                throw new Error("KSRTCEngine is missing");
+              }
+
+              const result = window.KSRTCEngine.findBus(fromDistrict, toDistrict, timeToUse);
+              console.log("Search result:", result);
+              setSearchResult(result);
+              setIsSearching(false);
+              setActiveTab('results');
+            } catch (innerErr) {
+              console.error("Error inside handleSearch timeout:", innerErr);
+              setIsSearching(false);
+              setSearchResult({ status: 'Error', message: 'Internal search engine error.' });
+              setActiveTab('results');
+            }
+          }, 600);
+        } catch (err) {
+          console.error("Error in handleSearch:", err);
+          setIsSearching(false);
+        }
+      };
+
+      useEffect(() => {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        return () => observer.disconnect();
+      }, []);
+
+      return (
+        <div className="min-h-screen bg-white">
+          <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+            <div className="container mx-auto px-4 h-14 flex items-center justify-between max-w-7xl">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                  <Icon name="bus" className="w-5 h-5 text-white" />
+                </div>
+                <span className="font-bold text-lg text-gray-900">KSRTC Finder</span>
+              </div>
+            </div>
+          </nav>
+
+          <section className="relative pt-24 bg-gradient-to-br from-red-600 via-red-700 to-black text-white overflow-hidden min-h-screen flex flex-col justify-center">
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="absolute inset-0 hero-pattern opacity-10"></div>
+            <div className="container mx-auto px-4 py-16 relative z-10 max-w-7xl">
+              <div className="max-w-4xl mx-auto text-center mb-12">
+                <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight animate-fade-in">KSRTC Bus Finder</h1>
+                <p className="text-xl md:text-2xl mb-10 text-white/90 font-medium">Find Your Perfect Bus Route Across Karnataka</p>
+              </div>
+
+              <div className="max-w-4xl mx-auto">
+                <Card className="shadow-2xl border-0">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-xl text-center">Search Your Bus</CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <Tabs value={activeTab} onValueChange={setActiveTab}>
+                      <TabsList>
+                        <TabsTrigger value="search">Search</TabsTrigger>
+                        <TabsTrigger value="results">Results{searchResult ? ' (1)' : ''}</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="search">
+                        <div className="space-y-5">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
+                                <Icon name="map-pin" className="w-4 h-4 text-red-600" /> From
+                              </label>
+                              <Select value={fromDistrict} onChange={setFromDistrict} placeholder="Select starting point" options={districts} />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
+                                <Icon name="map-pinned" className="w-4 h-4 text-red-600" /> To
+                              </label>
+                              <Select value={toDistrict} onChange={setToDistrict} placeholder="Select destination" options={districts} />
+                            </div>
+                          </div>
+
+                          <div className="grid md:grid-cols-3 gap-3">
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
+                                <Icon name="clock" className="w-4 h-4 text-red-600" /> Date
+                              </label>
+                              <input type="date" id="date" value={selectedDate} onChange={e => { setSelectedDate(e.target.value); setTimingResult(null); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
+                                <Icon name="clock" className="w-4 h-4 text-red-600" /> Time
+                              </label>
+                              <input type="time" id="userTime" value={selectedTime} onChange={e => { setSelectedTime(e.target.value); setTimingResult(null); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600" />
+                            </div>
+                            <div className="flex items-end">
+                              <Button onClick={handleCheckTiming} disabled={!fromDistrict || !toDistrict} className="w-full bg-gray-900 hover:bg-gray-800 text-white border-0 h-10">
+                                <Icon name="search" className="w-3.5 h-3.5" /> Check Bus Timing
+                              </Button>
+                            </div>
+                          </div>
+
+                          {timingResult && (
+                            <div className={`rounded-lg border p-3 text-sm ${timingResult.type === 'exact' ? 'bg-green-50 border-green-200 text-green-800' : timingResult.type === 'error' ? 'bg-red-50 border-red-200 text-red-700' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
+                              {timingResult.type === 'exact' && <div className="flex items-center gap-2"><Icon name="check-circle" className="w-4 h-4 text-green-600 flex-shrink-0" /><span><strong>Bus available at</strong> {timingResult.match} on {timingResult.date}</span></div>}
+                              {timingResult.type === 'error' && <span>{timingResult.message}</span>}
+                              {timingResult.type === 'nearest' && (
+                                <div>
+                                  <p className="font-semibold mb-2">No exact match on {timingResult.date}. Nearest available buses:</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {timingResult.results.map((r, i) => <span key={i} className="inline-flex items-center gap-1.5 bg-white border border-amber-300 rounded-lg px-2.5 py-1 text-xs font-medium"><Icon name="clock" className="w-3 h-3 text-amber-600" />{r.timing}<span className="text-amber-500">(±{r.diff}m)</span></span>)}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          <Button onClick={handleSearch} disabled={!fromDistrict || !toDistrict || isSearching} className="w-full bg-red-600 hover:bg-red-700 text-white border-0 focus:ring-red-600 h-11 text-base">
+                            {isSearching ? <><span className="spinner mr-2"></span> Searching...</> : <><Icon name="search" className="w-4 h-4" /> Search Buses</>}
+                          </Button>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="results">
+                        {trackingActive ? (
+                          <div className="space-y-6 animate-fade-in">
+                            <div className="flex items-center justify-between">
+                              <button onClick={() => setTrackingActive(null)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 border px-3 py-1.5 rounded-lg border-gray-200 bg-gray-50 flex items-center gap-2 transition-colors">← Back to Results</button>
+                              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-700 animate-pulse border border-green-200 shadow-sm">● Live Tracking</span>
+                            </div>
+                            
+                            {toastMessage && (
+                              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-4 rounded-xl flex items-start gap-4 shadow-sm relative overflow-hidden animate-[pulse_0.5s_ease-out_1]">
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                                <div className="bg-amber-100 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <Icon name="bell" className="w-5 h-5 text-amber-600 animate-bounce" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-amber-900 text-base mb-0.5">Automated Arrival Alert</h4>
+                                  <p className="text-sm text-amber-700 font-medium">{toastMessage}</p>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="bg-white border rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-red-700"></div>
+                              <div className="flex justify-between items-start mb-10">
+                                <div>
+                                  <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight">Route Simulation</h3>
+                                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{trackingActive.from} TO {trackingActive.to}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs font-semibold text-gray-400 uppercase mb-0.5 border-b pb-1 inline-block">Estimated Arrival</p>
+                                  <p className="text-lg font-extrabold text-gray-900">{trackingActive.nextBus}</p>
+                                </div>
+                              </div>
+                              
+                              <div className="relative pt-6 pb-2 px-1">
+                                <div className="absolute top-8 left-0 right-0 h-2 bg-gray-100 rounded-full overflow-hidden border border-gray-200"></div>
+                                <div className="absolute top-8 left-0 h-2 bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(220,38,38,0.6)]" style={{width: `${progress}%`}}></div>
+                                
+                                <div className="absolute transition-all duration-1000 ease-linear shadow-lg rounded-full" style={{ left: `calc(${progress}% - 20px)`, top: '10px' }}>
+                                  <div className="bg-white border-[3px] border-red-600 p-2 rounded-full z-10 relative cursor-pointer group shadow-lg hover:scale-110 transition-transform">
+                                    <Icon name="bus" className="w-5 h-5 text-red-600" />
+                                    <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-bold py-1 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl">
+                                      {Math.round(progress)}% Completed
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="flex justify-between mt-10 text-sm font-bold relative text-gray-600">
+                                  <span className="flex flex-col items-center">
+                                    <span className="w-3 h-3 rounded-full bg-red-600 mb-2 ring-4 ring-red-50 relative -top-12 shadow-sm"></span>
+                                    {trackingActive.from}
+                                  </span>
+                                  <span className="flex flex-col items-center">
+                                    <span className="w-3 h-3 rounded-full bg-gray-200 mb-2 ring-4 ring-gray-50 relative -top-12 shadow-sm transition-colors duration-500" style={{backgroundColor: progress===100 ? '#dc2626' : undefined}}></span>
+                                    {trackingActive.to}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : searchResult ? (() => {
+                          const r = searchResult;
+                          const statusColor = r.status === 'Available' ? { bg: 'bg-green-50', border: 'border-green-200', dot: 'bg-green-500', text: 'text-green-700' } : r.status === 'Not started' ? { bg: 'bg-amber-50', border: 'border-amber-200', dot: 'bg-amber-500', text: 'text-amber-700' } : r.status === 'No buses now' ? { bg: 'bg-red-50', border: 'border-red-200', dot: 'bg-red-500', text: 'text-red-700' } : { bg: 'bg-gray-50', border: 'border-gray-200', dot: 'bg-gray-400', text: 'text-gray-600' };
+                          const freqColor = r.frequency === 'High' ? 'text-green-600 bg-green-50 border-green-200' : r.frequency === 'Medium' ? 'text-amber-600 bg-amber-50 border-amber-200' : 'text-gray-600 bg-gray-50 border-gray-200';
+                          const demandColor = r.demand === 'HIGH' ? 'text-red-600 bg-red-50 border-red-200' : r.demand === 'MEDIUM' ? 'text-amber-600 bg-amber-50 border-amber-200' : 'text-blue-600 bg-blue-50 border-blue-200';
+                          const timingsToShow = showAllTimings ? r.upcomingBuses : r.upcomingBuses.slice(0, 8);
+                          return (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm text-gray-500"><span className="font-semibold text-gray-900">{r.from}</span><span className="mx-2 text-gray-400">→</span><span className="font-semibold text-gray-900">{r.to}</span></p>
+                                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${demandColor}`}>{r.demand === 'HIGH' ? '🔥 High Demand' : r.demand === 'MEDIUM' ? '🟡 Medium' : '🔴 Long Distance'}</span>
+                              </div>
+                              <div className={`rounded-xl border-2 p-4 ${statusColor.bg} ${statusColor.border}`}>
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1"><span className={`inline-block w-2.5 h-2.5 rounded-full ${statusColor.dot}`}></span><span className={`text-sm font-bold ${statusColor.text}`}>{r.status}</span></div>
+                                    <p className="text-xs text-gray-500 mb-3">{r.message}</p>
+                                    {r.nextBus && (<div><p className="text-xs text-gray-400">Next Bus</p><p className="text-xl font-extrabold text-gray-900">{r.nextBus}</p></div>)}
+                                  </div>
+                                  <div className="text-right space-y-2">
+                                    {r.frequency && (<div><p className="text-xs text-gray-400">Frequency</p><span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${freqColor}`}>{r.frequency}</span></div>)}
+                                    {r.firstBus && (<div><p className="text-xs text-gray-400">First / Last</p><p className="text-xs font-medium text-gray-700">{r.firstBus.split('\u2013')[0].trim()}</p><p className="text-xs font-medium text-gray-700">{r.lastBus.split('\u2013')[0].trim()}</p></div>)}
+                                  </div>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-gray-100">
+                                  <button onClick={() => { setTrackingActive({ from: r.from, to: r.to, nextBus: r.nextBus || r.upcomingBuses[0] || 'Unknown' }); setProgress(0); setToastMessage(''); }} className="w-full bg-gray-900 hover:bg-gray-800 transition-colors text-white text-sm font-semibold rounded-xl py-3 flex justify-center items-center gap-2 shadow-sm">
+                                    <Icon name="navigation" className="w-4 h-4" /> Start Journey Simulation
+                                  </button>
+                                </div>
+                              </div>
+                              {r.upcomingBuses.length > 0 && (
+                                <div>
+                                  <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Upcoming Buses</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {timingsToShow.map((t, i) => <span key={i} className={`text-xs font-medium px-2.5 py-1 rounded-lg border ${i === 0 ? 'bg-red-600 text-white border-red-600' : 'bg-gray-50 text-gray-700 border-gray-200'}`}>{t.split('\u2013')[0].trim()}</span>)}
+                                    {r.upcomingBuses.length > 8 && <button onClick={() => setShowAllTimings(!showAllTimings)} className="text-xs font-semibold text-red-600 hover:underline px-2">{showAllTimings ? 'Show less' : `+${r.upcomingBuses.length - 8} more`}</button>}
+                                  </div>
+                                </div>
+                              )}
+                              {r.note && <p className="text-xs text-gray-400 border-t border-gray-100 pt-3">⚠️ {r.note}</p>}
+                            </div>
+                          );
+                        })() : (
+                          <div className="text-center py-16">
+                            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4"><Icon name="bus" className="w-8 h-8 text-gray-400" /></div>
+                            <p className="text-gray-500 mb-2">No results yet</p>
+                            <button onClick={() => setActiveTab('search')} className="mt-4 text-sm text-red-600 hover:underline">← Back to Search</button>
+                          </div>
+                        )}
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Wave Divider */}
+            <div className="absolute bottom-0 left-0 right-0">
+              <svg viewBox="0 0 1440 60" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z"/>
+              </svg>
+            </div>
+          </section>
+
+          {/* ── FEATURES ── */}
+          <section id="features" className="py-24 bg-white">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-16 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold border border-red-100 mb-4">
+                  Features
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">Why Choose KSRTC Bus Finder?</h2>
+                <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                  Experience the most advanced bus finding platform with features designed for your convenience
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {features.map((feature, index) => (
+                  <div key={index} className="reveal group p-6 rounded-2xl border-2 border-gray-100 hover:border-red-200 hover:shadow-lg transition-all duration-300 bg-white card-hover" style={{transitionDelay: `${index * 50}ms`}}>
+                    <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-600 mb-4 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                      <Icon name={feature.icon} className="w-6 h-6" />
+                    </div>
+                    <h3 className="font-bold text-gray-900 text-lg mb-2">{feature.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── STATS ── */}
+          <section className="py-20 bg-gradient-to-r from-red-600 to-red-700 text-white">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-12 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold border border-white/30 mb-4">
+                  Trusted Platform
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-3">Trusted by Thousands</h2>
+                <p className="text-red-100">Join the growing community of smart travelers</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  { icon: 'users', value: '50K+', label: 'Active Users' },
+                  { icon: 'bus', value: '500+', label: 'Bus Routes' },
+                  { icon: 'trending-up', value: '98%', label: 'Accuracy Rate' },
+                  { icon: 'star', value: '4.8/5', label: 'User Rating' },
+                ].map((stat, index) => (
+                  <div key={index} className="reveal text-center p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors">
+                    <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <Icon name={stat.icon} className="w-7 h-7 text-white" />
+                    </div>
+                    <p className="text-4xl font-extrabold mb-1">{stat.value}</p>
+                    <p className="text-red-100 text-sm">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── TESTIMONIALS ── */}
+          <section className="py-24 bg-gray-50">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-16 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold border border-red-100 mb-4">
+                  Testimonials
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">What Our Users Say</h2>
+                <p className="text-lg text-gray-500">Real experiences from real travelers</p>
+              </div>
+              <div className="grid md:grid-cols-3 gap-6">
+                {testimonials.map((t, index) => (
+                  <div key={index} className="reveal p-6 rounded-2xl bg-white border-2 border-gray-100 hover:border-red-200 hover:shadow-lg transition-all card-hover">
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(t.rating)].map((_, i) => (
+                        <Icon key={i} name="star" className="w-4 h-4 text-yellow-400" />
+                      ))}
+                    </div>
+                    <p className="text-gray-700 text-sm leading-relaxed italic mb-6">"{t.content}"</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
+                        <p className="text-xs text-gray-500">{t.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── POPULAR ROUTES ── */}
+          <section id="popular-routes" className="py-24 bg-white">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-16 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-semibold mb-4">
+                  <Icon name="route" className="w-3 h-3" /> Popular Routes
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">Popular Routes</h2>
+                <p className="text-lg text-gray-500">Explore the most travelled KSRTC bus routes across Karnataka</p>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {popularRoutes.map((route, index) => (
+                  <div
+                    key={index}
+                    className={`reveal group relative rounded-2xl border-2 flex flex-col overflow-hidden transition-all duration-300 card-hover
+                      ${route.highlight
+                        ? 'border-red-600 shadow-xl shadow-red-900/10'
+                        : 'border-gray-200 bg-white hover:border-red-300 hover:shadow-lg hover:shadow-red-900/5'
+                      }`}
+                    style={{transitionDelay: `${index * 60}ms`}}
+                  >
+                    {route.highlight && (
+                      <div className="absolute top-3 left-3 z-20 pointer-events-none">
+                        <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md border border-red-500/50">Top Pick</span>
+                      </div>
+                    )}
+                    
+                    <div className="relative h-44 w-full bg-gray-100 flex-shrink-0 group/img border-b border-gray-100">
+                      {uploadedImages[index] ? (
+                        <img src={uploadedImages[index]} alt={`${route.from} to ${route.to}`} className="object-cover w-full h-full" />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center h-full text-gray-400 bg-gradient-to-br from-gray-50 to-gray-200">
+                          <Icon name="image" className="w-10 h-10 mb-2 opacity-40 transition-transform group-hover/img:scale-110 duration-500" />
+                          <span className="text-sm font-semibold tracking-wide">Custom Image</span>
+                        </div>
+                      )}
+                      
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none backdrop-blur-[2px]">
+                        <span className="text-white text-sm font-semibold flex items-center gap-2 bg-black/60 px-4 py-2 rounded-full border border-white/20 shadow-lg">
+                          <Icon name="upload" className="w-4 h-4" /> Upload Photo
+                        </span>
+                      </div>
+                      
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={(e) => handleImageUpload(index, e)} 
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
+                        title="Upload Custom Route Image" 
+                      />
+                    </div>
+
+                    <div className="p-6 flex-1 flex flex-col pt-5">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-gray-900 text-base">{route.from}</span>
+                          <div className="flex items-center gap-1 text-gray-400">
+                            <div className="w-4 h-px bg-gray-300"></div>
+                            <Icon name="bus" className="w-3.5 h-3.5 opacity-80" />
+                            <div className="w-4 h-px bg-gray-300"></div>
+                          </div>
+                          <span className="font-bold text-gray-900 text-base">{route.to}</span>
+                        </div>
+                        <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded-full flex-shrink-0 ${
+
+                        route.type === 'Volvo AC' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                      }`}>{route.type}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 mb-5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                          <Icon name="clock" className="w-3.5 h-3.5 text-red-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Duration</p>
+                          <p className="text-sm font-semibold text-gray-800">{route.duration}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                          <Icon name="bell" className="w-3.5 h-3.5 text-red-500" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Frequency</p>
+                          <p className="text-sm font-semibold text-gray-800">{route.frequency}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div>
+                        <p className="text-xs text-gray-400">Next Available</p>
+                        <p className="text-lg font-extrabold text-gray-900">{route.nextBus}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={`inline-block w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                            route.status === 'On Time' ? 'bg-green-500' : 'bg-amber-500'
+                          }`}></span>
+                          <span className={`text-xs font-medium ${
+                            route.status === 'On Time' ? 'text-green-600' : 'text-amber-600'
+                          }`}>{route.status} · {route.seats} seats left</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setFromDistrict(route.from === 'Bengaluru' ? 'Bangalore' : route.from);
+                          setToDistrict(route.to === 'Mysuru' ? 'Mysore' : route.to);
+                          setActiveTab('search');
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+                      >
+                        Search <Icon name="arrow-right" className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── FAQ ── */}
+          <section id="faq" className="py-24 bg-gray-50">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-16 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold border border-red-100 mb-4">
+                  FAQ
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">Frequently Asked Questions</h2>
+                <p className="text-lg text-gray-500">Everything you need to know about KSRTC Bus Finder</p>
+              </div>
+              <div className="max-w-3xl mx-auto reveal">
+                <Accordion>
+                  {faqs.map((faq, index) => (
+                    <AccordionItem key={index} value={`item-${index}`}>
+                      <AccordionTrigger>{faq.question}</AccordionTrigger>
+                      <AccordionContent>{faq.answer}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </div>
+          </section>
+
+          {/* ── CONTACT ── */}
+          <section id="contact" className="py-24 bg-white">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="text-center mb-16 reveal">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600 text-white text-xs font-semibold mb-4">
+                  Contact Us
+                </span>
+                <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">Get in Touch</h2>
+                <p className="text-lg text-gray-500">Have questions? We're here to help!</p>
+              </div>
+              <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div className="reveal">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Send us a Message</CardTitle>
+                      <CardDescription>Fill out the form and we'll get back to you soon</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4 pt-4">
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 block mb-1.5">Name</label>
+                        <Input placeholder="Your full name" value={contactForm.name} onChange={e => setContactForm({...contactForm, name: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 block mb-1.5">Email</label>
+                        <Input type="email" placeholder="your@email.com" value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 block mb-1.5">Message</label>
+                        <Input placeholder="How can we help?" value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})} />
+                      </div>
+                      <button
+                        onClick={() => { alert('Message sent! We\'ll get back to you within 24 hours.'); setContactForm({name:'',email:'',message:''}); }}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
+                      >
+                        Send Message
+                      </button>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div className="space-y-4 reveal">
+                  {[
+                    { icon: 'phone', title: 'Phone', line1: '+91 80 1234 5678', line2: 'Mon-Fri 9am-6pm' },
+                    { icon: 'mail', title: 'Email', line1: 'support@ksrtcbusfinder.com', line2: 'We\'ll respond within 24 hours' },
+                    { icon: 'map-pin', title: 'Office', line1: 'Bangalore, Karnataka', line2: 'India – 560001' },
+                  ].map((info, index) => (
+                    <Card key={index}>
+                      <CardContent className="pt-5">
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-600 flex-shrink-0">
+                            <Icon name={info.icon} className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 text-sm">{info.title}</p>
+                            <p className="text-gray-600 text-sm mt-0.5">{info.line1}</p>
+                            <p className="text-gray-400 text-xs mt-0.5">{info.line2}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── FOOTER ── */}
+          <footer className="bg-gray-950 text-white py-16">
+            <div className="container mx-auto px-4 max-w-7xl">
+              <div className="grid md:grid-cols-4 gap-10 mb-12">
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                      <Icon name="bus" className="w-5 h-5 text-white" />
+                    </div>
+                    <span className="text-lg font-bold">KSRTC Finder</span>
+                  </div>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Your trusted companion for Karnataka bus travel. Find, track, and plan your journey with ease.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-4 text-sm">Quick Links</h3>
+                  <ul className="space-y-2.5 text-sm text-gray-400">
+                    {['Home', 'Features', 'Pricing', 'Contact'].map(link => (
+                      <li key={link}><a href={`#${link.toLowerCase()}`} className="hover:text-red-400 transition-colors">{link}</a></li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-4 text-sm">Resources</h3>
+                  <ul className="space-y-2.5 text-sm text-gray-400">
+                    {['Help Center', 'Privacy Policy', 'Terms of Service', 'API Documentation'].map(link => (
+                      <li key={link}><a href="#" className="hover:text-red-400 transition-colors">{link}</a></li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-4 text-sm">Newsletter</h3>
+                  <p className="text-sm text-gray-400 mb-4">Subscribe to get updates on new routes and features</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      placeholder="Your email"
+                      value={newsletterEmail}
+                      onChange={e => setNewsletterEmail(e.target.value)}
+                      className="flex-1 h-9 px-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-red-400 transition-colors"
+                    />
+                    <button
+                      onClick={() => { if(newsletterEmail) { alert('Subscribed!'); setNewsletterEmail(''); }}}
+                      className="h-9 w-9 flex items-center justify-center bg-red-600 hover:bg-red-700 rounded-lg transition-colors flex-shrink-0"
+                    >
+                      <Icon name="arrow-right" className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+                <p>© 2024 KSRTC Bus Finder. All rights reserved.</p>
+                <p>Made with ❤️ for Karnataka travelers</p>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<KSRTCBusFinder />);
+  </script>
+</body>
+</html>
