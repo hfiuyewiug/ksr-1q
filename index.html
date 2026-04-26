@@ -62,8 +62,10 @@
   <script>
   window.findBus = function() {
     try {
-        const date = document.getElementById("date")?.value;
-        const time = document.getElementById("userTime")?.value;
+        const dateEl = document.getElementById("date");
+        const timeEl = document.getElementById("userTime");
+        const date = dateEl ? dateEl.value : null;
+        const time = timeEl ? timeEl.value : null;
         if (!date || !time) {
             alert("Please select both Date and Time!");
             return;
@@ -1411,9 +1413,11 @@
       );
     }
 
-    // Render
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<KSRTCBusFinder />);
+    // Render safely
+    if (!window.__reactRoot) {
+      window.__reactRoot = ReactDOM.createRoot(document.getElementById('root'));
+    }
+    window.__reactRoot.render(<KSRTCBusFinder />);
   </script>
 </body>
 </html>
