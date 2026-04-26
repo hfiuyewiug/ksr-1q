@@ -60,6 +60,43 @@
 
   <!-- KSRTC Bus Schedule Engine (inline) -->
   <script>
+  window.findBus = function() {
+    try {
+        const date = document.getElementById("date")?.value;
+        const time = document.getElementById("userTime")?.value;
+        if (!date || !time) {
+            alert("Please select both Date and Time!");
+            return;
+        }
+
+        let formattedTime = time;
+        if (time) {
+            const [h, m] = time.split(':');
+            const hours = parseInt(h, 10);
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const hours12 = hours % 12 || 12;
+            formattedTime = `${hours12}:${m} ${ampm}`;
+        }
+        
+        let formattedDate = date;
+        if (date) {
+            const [year, month, day] = date.split('-');
+            formattedDate = `${day}-${month}-${year}`;
+        }
+        
+        alert(`Selected Date: ${formattedDate}\nSelected Time: ${formattedTime}`);
+        console.log(`Selected Date: ${formattedDate}`);
+        console.log(`Selected Time: ${formattedTime}`);
+        
+        const resultEl = document.getElementById("result");
+        if (resultEl) {
+            resultEl.innerText = `Selected Date: ${formattedDate} | Selected Time: ${formattedTime}`;
+        }
+    } catch (err) {
+        console.error("Error in findBus:", err);
+    }
+  };
+
   (function(g){
     const AL={'bangalore':'Bengaluru','bengaluru':'Bengaluru','mysore':'Mysuru','mysuru':'Mysuru','belgaum':'Belagavi','belagavi':'Belagavi','chikmagalur':'Chikkamagaluru','chikkamagaluru':'Chikkamagaluru','kalaburagi':'Kalaburagi','gulbarga':'Kalaburagi','madurai':'Madurai','bantwal':'Bantwal','madikeri':'Madikeri','mercara':'Madikeri'};
     function nc(n){if(!n)return '';const k=n.trim().toLowerCase();return AL[k]||n.trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');}
@@ -497,7 +534,22 @@
       const [trackingActive, setTrackingActive] = useState(null);
       const [progress, setProgress] = useState(0);
       const [toastMessage, setToastMessage] = useState('');
-      const [uploadedImages, setUploadedImages] = useState({});
+      const [uploadedImages, setUploadedImages] = useState(() => {
+        try {
+          const saved = localStorage.getItem('ksrtc_images');
+          return saved ? JSON.parse(saved) : {};
+        } catch (e) {
+          return {};
+        }
+      });
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('ksrtc_images', JSON.stringify(uploadedImages));
+        } catch (e) {
+          console.warn('Failed to save to localStorage (maybe images are too large)', e);
+        }
+      }, [uploadedImages]);
 
       useEffect(() => {
         let interval;
@@ -669,6 +721,7 @@
             formattedDate = `${day}-${month}-${year}`;
           }
 
+          alert(`Selected Date: ${formattedDate}\nSelected Time: ${formattedTime}`);
           console.log("Selected Date:", formattedDate);
           console.log("Selected Time:", formattedTime);
 
