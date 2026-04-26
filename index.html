@@ -540,6 +540,7 @@
       const [showAllTimings, setShowAllTimings] = useState(false);
       const [selectedDate, setSelectedDate] = useState('');
       const [selectedTime, setSelectedTime] = useState('');
+      const [selectedAmpm, setSelectedAmpm] = useState('AM');
       const [timingResult, setTimingResult] = useState(null);
       const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
       const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -719,16 +720,14 @@
             return;
           }
 
-          let formattedTime = time;
           let formattedDate = date;
+          let formattedTime = `${time} ${selectedAmpm}`;
 
-          if (time) {
-            const [h, m] = time.split(':');
-            const hours = parseInt(h, 10);
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const hours12 = hours % 12 || 12;
-            formattedTime = `${hours12}:${m} ${ampm}`;
-          }
+          let [hh, mm] = time.split(':');
+          let hours24 = parseInt(hh, 10);
+          if (selectedAmpm === 'PM' && hours24 !== 12) hours24 += 12;
+          if (selectedAmpm === 'AM' && hours24 === 12) hours24 = 0;
+          let engineTime = `${String(hours24).padStart(2, '0')}:${mm || '00'}`;
 
           alert(`Selected Date: ${formattedDate}\nSelected Time: ${formattedTime}`);
           console.log("Selected Date:", formattedDate);
@@ -741,7 +740,7 @@
           const engine = window.KSRTCEngine;
           if (!engine) return setTimingResult({ type: 'error', message: 'Bus data engine not loaded.' });
           
-          const result = engine.findBus(fromDistrict, toDistrict, time);
+          const result = engine.findBus(fromDistrict, toDistrict, engineTime);
           if (result.status === 'No route found') {
             setTimingResult({ type: 'error', message: `No direct route found from ${fromDistrict} to ${toDistrict}.` });
           } else if (result.status === 'No buses now' || result.upcomingBuses.length === 0) {
@@ -765,23 +764,27 @@
           
           setTimeout(() => {
             try {
-              let timeToUse;
+              let engineTime;
+              let displayTime;
               if (selectedTime) {
-                 timeToUse = selectedTime;
+                 let [h, m] = selectedTime.split(':');
+                 let hours24 = parseInt(h, 10);
+                 if (selectedAmpm === 'PM' && hours24 !== 12) hours24 += 12;
+                 if (selectedAmpm === 'AM' && hours24 === 12) hours24 = 0;
+                 engineTime = `${String(hours24).padStart(2, '0')}:${m || '00'}`;
+                 displayTime = `${selectedTime} ${selectedAmpm}`;
               } else {
                  const now  = new Date();
                  const hh   = String(now.getHours()).padStart(2, '0');
                  const mm   = String(now.getMinutes()).padStart(2, '0');
-                 timeToUse = `${hh}:${mm}`;
+                 engineTime = `${hh}:${mm}`;
+                 
+                 const hours12 = now.getHours() % 12 || 12;
+                 const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+                 displayTime = `${String(hours12).padStart(2, '0')}:${mm} ${ampm}`;
               }
               
               let displayDate = selectedDate;
-              let displayTime = timeToUse;
-              if (displayTime) {
-                const [h, m] = displayTime.split(':');
-                const hours = parseInt(h, 10);
-                displayTime = `${hours % 12 || 12}:${m} ${hours >= 12 ? 'PM' : 'AM'}`;
-              }
               if (!displayDate) {
                 displayDate = "Today";
               }
@@ -790,7 +793,7 @@
                 throw new Error("KSRTCEngine is missing");
               }
 
-              const result = window.KSRTCEngine.findBus(fromDistrict, toDistrict, timeToUse);
+              const result = window.KSRTCEngine.findBus(fromDistrict, toDistrict, engineTime);
               result.userDate = displayDate;
               result.userTime = displayTime;
               
@@ -910,12 +913,19 @@
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
                                 <Icon name="clock" className="w-4 h-4 text-red-600" /> Time
                               </label>
-                              <input type="text" id="time" placeholder="HH:MM" value={selectedTime} autoComplete="off" onChange={e => {
-                                let v = e.target.value.replace(/\D/g, "").slice(0, 4);
-                                if (v.length >= 3) v = v.slice(0, 2) + ":" + v.slice(2);
-                                setSelectedTime(v);
-                                setTimingResult(null);
-                              }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
+                              <div className="flex h-10 w-full rounded-lg border border-gray-300 bg-white shadow-sm focus-within:ring-2 focus-within:ring-red-600 focus-within:border-red-600 overflow-hidden">
+                                <input type="text" id="time" placeholder="HH:MM" value={selectedTime} autoComplete="off" onChange={e => {
+                                  let v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                  if (v.length >= 3) v = v.slice(0, 2) + ":" + v.slice(2);
+                                  setSelectedTime(v);
+                                  setTimingResult(null);
+                                }} className="flex-1 w-full bg-transparent px-3 py-1 text-sm outline-none text-black h-full" />
+                                <div className="h-full w-px bg-gray-300"></div>
+                                <select value={selectedAmpm} onChange={e => { setSelectedAmpm(e.target.value); setTimingResult(null); }} className="bg-transparent px-2 text-sm font-bold outline-none text-black cursor-pointer hover:bg-gray-50 transition-colors h-full appearance-none">
+                                  <option value="AM">AM</option>
+                                  <option value="PM">PM</option>
+                                </select>
+                              </div>
                             </div>
                             <div className="flex items-end">
                               <Button onClick={handleCheckTiming} disabled={!fromDistrict || !toDistrict} className="w-full bg-gray-900 hover:bg-gray-800 text-white border-0 h-10">
