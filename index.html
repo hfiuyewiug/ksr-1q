@@ -230,6 +230,12 @@
     /* Smooth scroll */
     html { scroll-behavior: smooth; }
 
+    /* Input overrides */
+    input#date, input#time {
+      color: #000 !important;
+      background-color: #fff !important;
+    }
+
     /* Section fade-in on scroll */
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
@@ -724,11 +730,6 @@
             formattedTime = `${hours12}:${m} ${ampm}`;
           }
 
-          if (date) {
-            const [year, month, day] = date.split('-');
-            formattedDate = `${day}-${month}-${year}`;
-          }
-
           alert(`Selected Date: ${formattedDate}\nSelected Time: ${formattedTime}`);
           console.log("Selected Date:", formattedDate);
           console.log("Selected Time:", formattedTime);
@@ -781,10 +782,7 @@
                 const hours = parseInt(h, 10);
                 displayTime = `${hours % 12 || 12}:${m} ${hours >= 12 ? 'PM' : 'AM'}`;
               }
-              if (displayDate) {
-                const [y, m, d] = displayDate.split('-');
-                displayDate = `${d}-${m}-${y}`;
-              } else {
+              if (!displayDate) {
                 displayDate = "Today";
               }
               
@@ -900,13 +898,24 @@
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
                                 <Icon name="clock" className="w-4 h-4 text-red-600" /> Date
                               </label>
-                              <input type="date" id="date" value={selectedDate} onChange={e => { setSelectedDate(e.target.value); setTimingResult(null); if (e.target.value) e.target.setAttribute('value', e.target.value); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
+                              <input type="text" id="date" placeholder="DD-MM-YYYY" value={selectedDate} autoComplete="off" onChange={e => {
+                                let v = e.target.value.replace(/\D/g, "").slice(0, 8);
+                                if (v.length >= 5) v = v.slice(0, 2) + "-" + v.slice(2, 4) + "-" + v.slice(4);
+                                else if (v.length >= 3) v = v.slice(0, 2) + "-" + v.slice(2);
+                                setSelectedDate(v);
+                                setTimingResult(null);
+                              }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
                             </div>
                             <div className="space-y-1.5">
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
                                 <Icon name="clock" className="w-4 h-4 text-red-600" /> Time
                               </label>
-                              <input type="time" id="time" value={selectedTime} onChange={e => { setSelectedTime(e.target.value); setTimingResult(null); if (e.target.value) e.target.setAttribute('value', e.target.value); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
+                              <input type="text" id="time" placeholder="HH:MM" value={selectedTime} autoComplete="off" onChange={e => {
+                                let v = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                if (v.length >= 3) v = v.slice(0, 2) + ":" + v.slice(2);
+                                setSelectedTime(v);
+                                setTimingResult(null);
+                              }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
                             </div>
                             <div className="flex items-end">
                               <Button onClick={handleCheckTiming} disabled={!fromDistrict || !toDistrict} className="w-full bg-gray-900 hover:bg-gray-800 text-white border-0 h-10">
