@@ -242,37 +242,42 @@
   </style>
 </head>
 <body class="bg-white text-gray-900 antialiased relative">
-  <!-- Firebase Auth Module -->
+  <!-- Supabase Auth Module -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+    const supabaseUrl = 'https://hhbepffyglarluuksxst.supabase.co';
+    const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // Please replace with your actual anon key from Supabase Dashboard
 
     try {
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
+      const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
       window.FirebaseAuth = {
-        signIn: () => {
-          signInWithPopup(auth, provider).catch(err => {
-            console.error("Firebase Sign In Error:", err);
-            alert("Firebase not configured properly. Setup config in the HTML file.");
+        signIn: async () => {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google'
           });
+          if (error) {
+            console.error("Supabase Sign In Error:", error);
+            alert("Supabase authentication not configured properly. Setup the anon key in the HTML file.");
+          }
         },
-        signOut: () => signOut(auth),
-        onAuthStateChanged: (cb) => onAuthStateChanged(auth, cb)
+        signOut: async () => {
+          await supabase.auth.signOut();
+        },
+        onAuthStateChanged: (cb) => {
+          // Listen for future auth state changes
+          supabase.auth.onAuthStateChange((event, session) => {
+            cb(session?.user || null);
+          });
+          
+          // Initial check right now
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            cb(session?.user || null);
+          });
+        }
       };
     } catch (err) {
-      console.warn("Firebase initialization skipped -> Config is placeholder.", err);
+      console.warn("Supabase initialization skipped -> Key is placeholder.", err);
     }
   </script>
 
