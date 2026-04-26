@@ -331,12 +331,11 @@
     ];
 
     const popularRoutes = [
-      { from: 'Hassan',      to: 'Mangalore', duration: '3h 15m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '06:30 AM', seats: 18, status: 'On Time',  highlight: false },
-      { from: 'Madikeri',    to: 'Mysuru',    duration: '3h 45m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '07:00 AM', seats: 6,  status: 'On Time',  highlight: true  },
-      { from: 'Bengaluru',   to: 'Mysuru',    duration: '3h 00m', frequency: 'Every 15 mins', type: 'Volvo AC', nextBus: '06:45 AM', seats: 22, status: 'On Time',  highlight: false },
-      { from: 'Chikmagalur', to: 'Hassan',    duration: '2h 30m', frequency: 'Every 45 mins', type: 'Express',  nextBus: '07:15 AM', seats: 31, status: 'On Time',  highlight: false },
-      { from: 'Mangalore',   to: 'Bangalore', duration: '7h 00m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '05:30 AM', seats: 4,  status: 'Running Late', highlight: false },
-      { from: 'Hubli',       to: 'Belgaum',   duration: '2h 00m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '07:30 AM', seats: 26, status: 'On Time',  highlight: false },
+      { from: 'Mangalore',   to: 'Bangalore', duration: '7h 00m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '05:30 AM', seats: 4,  status: 'Running Late', highlight: true,  image: 'assets/route-1.jpg' },
+      { from: 'Hubli',       to: 'Belgaum',   duration: '2h 00m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '07:30 AM', seats: 26, status: 'On Time',  highlight: false, image: 'assets/route-2.jpg' },
+      { from: 'Hassan',      to: 'Mangalore', duration: '3h 15m', frequency: 'Every 30 mins', type: 'Express',  nextBus: '06:30 AM', seats: 18, status: 'On Time',  highlight: false, image: 'assets/route-3.jpg' },
+      { from: 'Madikeri',    to: 'Mysuru',    duration: '3h 45m', frequency: 'Every 1 hour',  type: 'Volvo AC', nextBus: '07:00 AM', seats: 6,  status: 'On Time',  highlight: false,  image: 'assets/route-4.jpg' },
+      { from: 'Chikmagalur', to: 'Hassan',    duration: '2h 30m', frequency: 'Every 45 mins', type: 'Express',  nextBus: '07:15 AM', seats: 31, status: 'On Time',  highlight: false, image: 'assets/route-5.jpg' },
     ];
 
     const faqs = [
@@ -1200,29 +1199,8 @@
                       </div>
                     )}
                     
-                    <div className="relative h-44 w-full bg-gray-100 flex-shrink-0 group/img border-b border-gray-100">
-                      {uploadedImages[index] ? (
-                        <img src={uploadedImages[index]} alt={`${route.from} to ${route.to}`} className="object-cover w-full h-full" />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-gray-400 bg-gradient-to-br from-gray-50 to-gray-200">
-                          <Icon name="image" className="w-10 h-10 mb-2 opacity-40 transition-transform group-hover/img:scale-110 duration-500" />
-                          <span className="text-sm font-semibold tracking-wide">Custom Image</span>
-                        </div>
-                      )}
-                      
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none backdrop-blur-[2px]">
-                        <span className="text-white text-sm font-semibold flex items-center gap-2 bg-black/60 px-4 py-2 rounded-full border border-white/20 shadow-lg">
-                          <Icon name="upload" className="w-4 h-4" /> Upload Photo
-                        </span>
-                      </div>
-                      
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={(e) => handleImageUpload(index, e)} 
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" 
-                        title="Upload Custom Route Image" 
-                      />
+                    <div className="relative h-44 w-full bg-gray-100 flex-shrink-0 border-b border-gray-100">
+                      <img src={route.image} alt={`${route.from} to ${route.to}`} className="object-cover w-full h-full" />
                     </div>
 
                     <div className="p-6 flex-1 flex flex-col pt-5">
