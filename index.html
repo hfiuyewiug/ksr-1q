@@ -63,7 +63,7 @@
   window.findBus = function() {
     try {
         const dateEl = document.getElementById("date");
-        const timeEl = document.getElementById("userTime");
+        const timeEl = document.getElementById("time");
         const date = dateEl ? dateEl.value : null;
         const time = timeEl ? timeEl.value : null;
         if (!date || !time) {
@@ -98,6 +98,27 @@
         console.error("Error in findBus:", err);
     }
   };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date");
+    const timeInput = document.getElementById("time");
+
+    if (dateInput) {
+      dateInput.addEventListener("change", function () {
+        if (this.value) {
+          this.setAttribute("value", this.value); // ensure visible
+        }
+      });
+    }
+
+    if (timeInput) {
+      timeInput.addEventListener("change", function () {
+        if (this.value) {
+          this.setAttribute("value", this.value); // ensure visible
+        }
+      });
+    }
+  });
 
   (function(g){
     const AL={'bangalore':'Bengaluru','bengaluru':'Bengaluru','mysore':'Mysuru','mysuru':'Mysuru','belgaum':'Belagavi','belagavi':'Belagavi','chikmagalur':'Chikkamagaluru','chikkamagaluru':'Chikkamagaluru','kalaburagi':'Kalaburagi','gulbarga':'Kalaburagi','madurai':'Madurai','bantwal':'Bantwal','madikeri':'Madikeri','mercara':'Madikeri'};
@@ -698,7 +719,7 @@
       const handleCheckTiming = () => {
         try {
           const dateEl = document.getElementById("date");
-          const timeEl = document.getElementById("userTime");
+          const timeEl = document.getElementById("time");
           const date = dateEl ? dateEl.value : selectedDate;
           const time = timeEl ? timeEl.value : selectedTime;
 
@@ -900,7 +921,7 @@
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
                                 <Icon name="clock" className="w-4 h-4 text-red-600" /> Time
                               </label>
-                              <input type="time" id="userTime" value={selectedTime} onChange={e => { setSelectedTime(e.target.value); setTimingResult(null); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600" />
+                              <input type="time" id="time" value={selectedTime} onChange={e => { setSelectedTime(e.target.value); setTimingResult(null); }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600" />
                             </div>
                             <div className="flex items-end">
                               <Button onClick={handleCheckTiming} disabled={!fromDistrict || !toDistrict} className="w-full bg-gray-900 hover:bg-gray-800 text-white border-0 h-10">
