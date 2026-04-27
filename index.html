@@ -1016,13 +1016,14 @@
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
                                 <Icon name="clock" className="w-4 h-4 text-red-600" /> Date
                               </label>
-                              <input type="text" id="date" placeholder="DD-MM-YYYY" value={selectedDate} autoComplete="off" onChange={e => {
+                              <input type="text" id="date" placeholder="DD-MM-YYYY" value={selectedDate} autoComplete="off" onInput={e => e.target.setAttribute('value', e.target.value)} onChange={e => {
                                 let v = e.target.value.replace(/\D/g, "").slice(0, 8);
                                 if (v.length >= 5) v = v.slice(0, 2) + "-" + v.slice(2, 4) + "-" + v.slice(4);
                                 else if (v.length >= 3) v = v.slice(0, 2) + "-" + v.slice(2);
                                 setSelectedDate(v);
+                                e.target.setAttribute('value', v);
                                 setTimingResult(null);
-                              }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none" />
+                              }} className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-1 text-sm text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 outline-none opacity-100 placeholder:text-gray-400" />
                             </div>
                             <div className="space-y-1.5">
                               <label className="text-sm font-medium flex items-center gap-1.5 text-gray-700">
@@ -1700,6 +1701,17 @@
       window.__reactRoot = ReactDOM.createRoot(document.getElementById('root'));
     }
     window.__reactRoot.render(<KSRTCBusFinder />);
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const dateBox = document.getElementById("date");
+      if (dateBox) {
+        dateBox.addEventListener("input", function() {
+          this.style.color = "#000000";
+          this.setAttribute("value", this.value);
+        });
+      }
+    });
   </script>
 </body>
 </html>
