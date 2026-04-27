@@ -601,14 +601,15 @@
           });
 
           const data = await response.json();
-          if (data.choices && data.choices[0]) {
+          if (response.ok && data.choices && data.choices[0]) {
             setChatMessages(prev => [...prev, data.choices[0].message]);
           } else {
-            throw new Error('Invalid response from AI');
+            const errorMsg = data.error ? data.error.message : 'Invalid response from AI';
+            throw new Error(errorMsg);
           }
         } catch (err) {
           console.error('AI Error:', err);
-          setChatMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting to my brain right now.' }]);
+          setChatMessages(prev => [...prev, { role: 'assistant', content: `Error: ${err.message}` }]);
         } finally {
           setIsAskingAI(false);
         }
